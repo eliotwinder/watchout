@@ -8,9 +8,10 @@ var options = {
 document.getElementsByClassName('game')[0].style.width = options.width;
 document.getElementsByClassName('game')[0].style.height = options.height;
 
+var game = d3.select('svg');
+
 var updateEnemyPosition = function(positions) {
-  var enemies = d3.select('.game').selectAll('image').data(positions)
-  
+  var enemies = game.selectAll('.enemy').data(positions);
 
   enemies.transition().duration(500).attr('x', function(pos) {
     return pos.x;
@@ -18,7 +19,7 @@ var updateEnemyPosition = function(positions) {
     return pos.y;
   });
 
-  enemies.enter().append('image').attr({'xlink:href': 'asteroid.png', width: '20px', height: '20px'}).attr('x', function(pos) {
+  enemies.enter().append('image').attr({'xlink:href': 'asteroid.png', width: '20px', height: '20px', class: 'enemy'}).attr('x', function(pos) {
     return pos.x;
   }).attr('y', function(pos) {
     return pos.y;
@@ -36,6 +37,15 @@ var randomPositions = function(n) {
   return results;
 }
 
+updateEnemyPosition(randomPositions(3));
 setInterval(function() {
   updateEnemyPosition(randomPositions(3));
 }, 1000);
+
+game.on('mousemove', function() {
+  // player move
+  var playerPos = d3.mouse(this);
+  var player = game.selectAll('.player').data([playerPos]);
+  player.attr('cx', function(pos) { return pos[0]}).attr('cy', function(pos) { return pos[1] });
+  player.enter().append('circle').attr({r: 20, class: 'player'});
+});
