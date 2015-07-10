@@ -13,7 +13,9 @@ var game = d3.select('svg');
 var updateEnemyPosition = function(positions) {
   var enemies = game.selectAll('.enemy').data(positions);
 
-  enemies.transition().duration(500).attr('x', function(pos) {
+  enemies.transition().tween('side-effects', function() {
+    return checkCollision;
+  }).duration(500).attr('x', function(pos) {
     return pos.x;
   }).attr('y', function(pos) {
     return pos.y;
@@ -42,10 +44,6 @@ setInterval(function() {
   updateEnemyPosition(randomPositions(3));
 }, 1000);
 
-setInterval(function() {
-  checkCollision();
-}, 5);
-
 game.on('mousemove', function() {
   // player move
   var playerPos = d3.mouse(this);
@@ -55,15 +53,25 @@ game.on('mousemove', function() {
   checkCollision();
 });
 
+var colliding = false;
+
 var checkCollision = function() {
   var svg = document.getElementsByClassName('game')[0];
   var player = document.getElementsByClassName('player');
 
   if (player.length > 0) {
     var playerBox = player[0].getBBox();
-
-    if (svg.getIntersectionList(playerBox, null).length > 1) {
-      console.log('You died.');
+    if (svg.getIntersectionList(playerBox, null).length > 1 ) {
+      if (!colliding) {
+        incrementCollisions();
+      }
+      colliding = true;
+    } else {
+      colliding = false;
     }
   }
 };
+
+var incrementCollisions = function() {
+  d3.select('.collisions span').text(+d3.select('.collisions span').text() + 1);
+}
