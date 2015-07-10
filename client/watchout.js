@@ -42,10 +42,28 @@ setInterval(function() {
   updateEnemyPosition(randomPositions(3));
 }, 1000);
 
+setInterval(function() {
+  checkCollision();
+}, 5);
+
 game.on('mousemove', function() {
   // player move
   var playerPos = d3.mouse(this);
   var player = game.selectAll('.player').data([playerPos]);
   player.attr('cx', function(pos) { return pos[0]}).attr('cy', function(pos) { return pos[1] });
   player.enter().append('circle').attr({r: 20, class: 'player'});
+  checkCollision();
 });
+
+var checkCollision = function() {
+  var svg = document.getElementsByClassName('game')[0];
+  var player = document.getElementsByClassName('player');
+
+  if (player.length > 0) {
+    var playerBox = player[0].getBBox();
+
+    if (svg.getIntersectionList(playerBox, null).length > 1) {
+      console.log('You died.');
+    }
+  }
+};
