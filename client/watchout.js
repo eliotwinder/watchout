@@ -1,13 +1,20 @@
 // start slingin' some d3 here.
 
+var options = {
+  width: 500,
+  height: 300
+};
+
+document.getElementsByClassName('game')[0].style.width = options.width;
+document.getElementsByClassName('game')[0].style.height = options.height;
+
 var updateEnemyPosition = function(positions) {
   var enemies = d3.select('.game').selectAll('image').data(positions)
   
-  enemies.attr('x', function(pos) {
+
+  enemies.transition().duration(500).attr('x', function(pos) {
     return pos.x;
-  });
-  
-  enemies.attr('y', function(pos) {
+  }).attr('y', function(pos) {
     return pos.y;
   });
 
@@ -22,9 +29,8 @@ var updateEnemyPosition = function(positions) {
 
 var randomPositions = function(n) {
   var results = [];
-  var bBox = document.getElementsByClassName('game')[0].getBBox();
   for (var i = 0; i < n; i++) {
-    results.push({x: Math.random() * bBox.width, y: Math.random() * bBox.height});
+    results.push({x: Math.random() * options.width, y: Math.random() * options.height});
   }
 
   return results;
