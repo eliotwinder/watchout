@@ -3,3 +3,23 @@
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
+.game {
+  background-image: url(maxresdefault.jpg)
+}
+
+.shuriken {
+  -webkit-animation-name: spin;
+  -webkit-animation-duration: 0.8s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+  transform-origin: 50% 50%;
+}
+
+@-webkit-keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

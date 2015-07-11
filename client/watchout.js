@@ -1,8 +1,13 @@
 // start slingin' some d3 here.
 
+
+///// LOOK INTO d3timer
+
+
+
 var options = {
-  width: 500,
-  height: 300
+  width: 1000,
+  height: 800
 };
 
 document.getElementsByClassName('game')[0].style.width = options.width;
@@ -21,7 +26,10 @@ var updateEnemyPosition = function(positions) {
     return pos.y;
   });
 
-  enemies.enter().append('image').attr({'xlink:href': 'asteroid.png', width: '20px', height: '20px', class: 'enemy'}).attr('x', function(pos) {
+  var enemyGraphics = [{'xlink:href': 'asteroid.png', class: 'asteroid enemy', width: '40px', height: '40px'}, {'xlink:href': 'shuriken.svg', class: 'shuriken enemy', width: '50px', height: '50px'}];
+  var randEnemy = enemyGraphics[Math.floor(Math.random() * enemyGraphics.length)]
+
+  enemies.enter().append('image').attr(randEnemy).attr('x', function(pos) {
     return pos.x;
   }).attr('y', function(pos) {
     return pos.y;
@@ -39,9 +47,10 @@ var randomPositions = function(n) {
   return results;
 };
 
-updateEnemyPosition(randomPositions(3));
+var numEnemies = 3;
+updateEnemyPosition(randomPositions(numEnemies));
 setInterval(function() {
-  updateEnemyPosition(randomPositions(3));
+  updateEnemyPosition(randomPositions(numEnemies));
 }, 1000);
 
 game.on('mousemove', function() {
@@ -49,7 +58,7 @@ game.on('mousemove', function() {
   var playerPos = d3.mouse(this);
   var player = game.selectAll('.player').data([playerPos]);
   player.attr('cx', function(pos) { return pos[0]}).attr('cy', function(pos) { return pos[1] });
-  player.enter().append('circle').attr({r: 20, class: 'player'});
+  player.enter().append('circle').attr({r: 10, fill: 'rgb(200, 200, 255)', class: 'player'});
   checkCollision();
 });
 
@@ -86,6 +95,9 @@ var score = 0;
 var highScore = 0;
 setInterval(function() {
   score++;
+  if (score % 20 === 0) {
+    numEnemies++;
+  }
   setScore();
 }, 100);
 
