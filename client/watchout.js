@@ -37,7 +37,7 @@ var randomPositions = function(n) {
   }
 
   return results;
-}
+};
 
 updateEnemyPosition(randomPositions(3));
 setInterval(function() {
@@ -74,4 +74,22 @@ var checkCollision = function() {
 
 var incrementCollisions = function() {
   d3.select('.collisions span').text(+d3.select('.collisions span').text() + 1);
+  if (score > highScore) {
+    highScore = score;
+  }
+
+  score = 0;
+  setScore();
+}
+
+var score = 0;
+var highScore = 0;
+setInterval(function() {
+  score++;
+  setScore();
+}, 100);
+
+var setScore = function() {
+  d3.select('.current span').text(score);
+  d3.select('.high span').text(highScore);
 }
