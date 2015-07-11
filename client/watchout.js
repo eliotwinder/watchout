@@ -9,7 +9,10 @@ var options = {
   width: 1000,
   height: 800,
   // if distance between enemies is less than localCutoff, the enemy steers away
-  localCutoff: 100
+  localCutoff: 100,
+  cohesionWeight: 25,
+  separationWeight: 40,
+  alignmentWeight: 40
 };
 
 document.getElementsByClassName('game')[0].style.width = options.width;
@@ -66,12 +69,14 @@ var randomEnemies = function(n) {
 };
 
 var moveEnemies = function(delta) {
-  var speed = 0.1;
+  var speed = 0.2;
   speed *= delta;
 
   var averagePosition = enemies.reduce(function(total, current) {
     return total.add(current.position);
   }, new Vector(0, 0)).divideScalar(enemies.length);
+
+  var alignmentVector = new Vector(0, 0);
 
   enemies.forEach(function (enemy) {
     var direction = enemy.direction;
@@ -83,9 +88,8 @@ var moveEnemies = function(delta) {
 
         if (displacement.length() < options.localCutoff) {
           separatingVector = separatingVector.subtract(displacement);
+          alignmentVector = alignmentVector.add(otherEnemy.direction.normalize());
         }
-
-        // MAGIC HERE
       }
     });
 
@@ -93,10 +97,11 @@ var moveEnemies = function(delta) {
 
     // direction = sum of the four rules normalized and weighted
     // direction = separatingVector.normalize();
-    var separationWeight = 6;
-    var cohesionWeight = 4;
-    direction = separatingVector.normalize().multiplyScalar(separationWeight).add(cohesionVector.normalize().multiplyScalar(cohesionWeight)).normalize();
-    var velocity = direction.normalize().multiplyScalar(speed);
+    enemy.direction = separatingVector.normalize().multiplyScalar(options.separationWeight)
+      .add(cohesionVector.normalize().multiplyScalar(options.cohesionWeight))
+      .add(alignmentVector.normalize().multiplyScalar(options.alignmentWeight)).normalize();
+
+    var velocity = enemy.direction.normalize().multiplyScalar(speed);
     enemy.position = enemy.position.add(velocity);
   });
 };
