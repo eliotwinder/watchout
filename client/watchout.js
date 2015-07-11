@@ -79,11 +79,13 @@ var moveEnemies = function(delta) {
 
   var alignmentVector = new Vector(0, 0);
 
-  enemies.forEach(function (enemy) {
+  for (var i = 0; i < enemies.length; i++) {
+    var enemy = enemies[i];
     var direction = enemy.direction;
     var separatingVector = new Vector(0, 0);
 
-    enemies.forEach(function(otherEnemy, i) {
+    for (var j = 0; j < enemies.length; j++) {
+      var otherEnemy = enemies[j];
       if (otherEnemy !== enemy) {
         var displacement = otherEnemy.position.subtract(enemy.position);
 
@@ -92,7 +94,7 @@ var moveEnemies = function(delta) {
           alignmentVector = alignmentVector.add(otherEnemy.direction.normalize());
         }
       }
-    });
+    };
 
     var cohesionVector = averagePosition.subtract(enemy.position);
     var goalVector = mouse.subtract(enemy.position);
@@ -106,7 +108,7 @@ var moveEnemies = function(delta) {
 
     var velocity = enemy.direction.normalize().multiplyScalar(speed);
     enemy.position = enemy.position.add(velocity);
-  });
+  }
 };
 
 var redraw = function(positions) {
@@ -140,7 +142,7 @@ d3.timer(function(now) {
 
   moveEnemies(delta);
   redraw(enemies);
-  checkCollision();
+  // checkCollision();
 });
 
 var mouse = new Vector(0,0);
