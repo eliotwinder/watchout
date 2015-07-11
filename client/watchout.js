@@ -9,10 +9,11 @@ var options = {
   width: 1000,
   height: 800,
   // if distance between enemies is less than localCutoff, the enemy steers away
-  localCutoff: 100,
-  cohesionWeight: 25,
-  separationWeight: 40,
-  alignmentWeight: 40
+  localCutoff: 20,
+  cohesionWeight: 10,
+  separationWeight: 15,
+  alignmentWeight: 10,
+  goalWeight: 2
 };
 
 document.getElementsByClassName('game')[0].style.width = options.width;
@@ -94,12 +95,14 @@ var moveEnemies = function(delta) {
     });
 
     var cohesionVector = averagePosition.subtract(enemy.position);
+    var goalVector = mouse.subtract(enemy.position);
 
     // direction = sum of the four rules normalized and weighted
     // direction = separatingVector.normalize();
     enemy.direction = separatingVector.normalize().multiplyScalar(options.separationWeight)
       .add(cohesionVector.normalize().multiplyScalar(options.cohesionWeight))
-      .add(alignmentVector.normalize().multiplyScalar(options.alignmentWeight)).normalize();
+      .add(alignmentVector.normalize().multiplyScalar(options.alignmentWeight))
+      .add(goalVector.normalize().multiplyScalar(options.goalWeight)).normalize();
 
     var velocity = enemy.direction.normalize().multiplyScalar(speed);
     enemy.position = enemy.position.add(velocity);
@@ -114,7 +117,7 @@ var redraw = function(positions) {
     return pos.position.y;
   });
 
-  enemies.enter().append('image').attr({'xlink:href': 'shuriken.svg', class: 'shuriken enemy', width: '50px', height: '50px'})
+  enemies.enter().append('image').attr({'xlink:href': 'shuriken.svg', class: 'shuriken enemy', width: '20px', height: '20px'})
     .attr('x', function(pos) { return pos.position.x; })
     .attr('y', function(pos) { return pos.position.y; })
     .attr('xlink:href', function(pos) { return pos.image; });
@@ -123,7 +126,7 @@ var redraw = function(positions) {
 };
 
 var game = d3.select('svg');
-var numEnemies = 10;
+var numEnemies = 100;
 var enemies = randomEnemies(numEnemies);
 
 redraw(enemies);
@@ -140,9 +143,12 @@ d3.timer(function(now) {
   checkCollision();
 });
 
+var mouse = new Vector(0,0);
+
 game.on('mousemove', function() {
   // player move
   var playerPos = d3.mouse(this);
+  mouse = new Vector(playerPos[0], playerPos[1]);
   var player = game.selectAll('.player').data([playerPos]);
   player.attr('cx', function(pos) { return pos[0]}).attr('cy', function(pos) { return pos[1] });
   player.enter().append('circle').attr({r: 10, fill: 'rgb(200, 200, 255)', class: 'player'});
