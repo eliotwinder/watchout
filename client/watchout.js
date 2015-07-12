@@ -9,7 +9,7 @@ var options = {
   width: 1000,
   height: 800,
   // if distance between enemies is less than localCutoff, the enemy steers away
-  localCutoff: 20,
+  localCutoff: 40,
   cohesionWeight: 10,
   separationWeight: 15,
   alignmentWeight: 10,
@@ -119,7 +119,7 @@ var redraw = function(positions) {
     return pos.position.y;
   });
 
-  enemies.enter().append('image').attr({'xlink:href': 'shuriken.svg', class: 'shuriken enemy', width: '20px', height: '20px'})
+  enemies.enter().append('image').attr({'xlink:href': 'shuriken.svg', class: 'shuriken enemy', width: '40px', height: '40px'})
     .attr('x', function(pos) { return pos.position.x; })
     .attr('y', function(pos) { return pos.position.y; })
     .attr('xlink:href', function(pos) { return pos.image; });
@@ -138,7 +138,6 @@ var lastTime = 0;
 d3.timer(function(now) {
   var delta = now - lastTime;
   lastTime = now;
-  // console.log(delta);
 
   moveEnemies(delta);
   redraw(enemies);

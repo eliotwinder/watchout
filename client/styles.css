@@ -8,11 +8,11 @@ Feel free to use it if you like. */
 }
 
 .shuriken {
-  -webkit-animation-name: spin;
+  /*-webkit-animation-name: spin;
   -webkit-animation-duration: 0.8s;
   -webkit-animation-timing-function: linear;
   -webkit-animation-iteration-count: infinite;
-  transform-origin: 50% 50%;
+  transform-origin: 50% 50%;*/
 }
 
 @-webkit-keyframes spin {
